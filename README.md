@@ -36,7 +36,7 @@ mkdir senscomm/leave
 创建一个应用：
 
 ```bash
-./manage.py startapp helloworld
+./manage.py startapp leave senscomm/leave
 ```
 
 现在就应该有以下这样的文件结构了:
