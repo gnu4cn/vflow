@@ -67,3 +67,36 @@ mkdir senscomm/leave
     └── wsgi.py
 
 ```
+
+## 配置
+
+打开 `demo/settings.py`，将 `viewflow` 与 `senscomm.leave` 添加到 `INSTALLED_APPS` 的设置中：
+
+```python
+INSTALLED_APPS = [
+    ...
+    'viewflow',
+    'senscomm.leave',
+]
+```
+
+## 模型定义
+
+打开 `senscomm/leave/models.py` 文件，通过`reason`与`approved`字段，来定义一个流程（process），从而实现在流程执行过程中，对流程状态进行捕获。
+
+```python
+from django.db import models
+from viewflow.models import Process
+
+class LeaveProcess(Process):
+    reason = models.CharField(max_length=150)
+    approved = models.BooleanField(default=False)
+```
+
+## 流的定义（Define flow）
+
+先来看看流的 BPMN 图表（business process model and notation diagram, 业务流程建模与标注图表）。后面就要将图表中的各个形状，映射到相应的节点定义。
+
+![leave 请假流的BPMN图表](images/Leave_flow.png)
+
+
