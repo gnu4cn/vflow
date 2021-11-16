@@ -9,13 +9,48 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
+import ldap
 from pathlib import Path
+from django_auth_ldap.config import LDAPSearch
+from django_auth_ldap.config import ActiveDirectoryGroupType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST')
+AUTH_LDAP_BIND_DN = "CN=lenny.peng@senscomm.com,CN=Users,DC=senscomm,DC=com"
+AUTH_LDAP_BIND_PASSWORD = os.getenv('LDAP_PASSWORD')
 
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+            "dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "sAMAccountName=%(user)s"
+)
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "sAMAccountName",
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "(objectCategory=Group)")
+
+AUTH_LDAP_GROUP_TYPE = ActiveDirectoryGroupType(name_attr="cn")
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_superuser": "CN=admin,CN=Users,DC=SENSCOMM,DC=COM",
+    "is_staff": "CN=Users,DC=SENSCOMM,DC=COM",
+}
+
+AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_CACHE_GROUPS = True
+AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
+]
+ 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
