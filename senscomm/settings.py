@@ -12,45 +12,46 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 import ldap
 from pathlib import Path
-from django_auth_ldap.config import LDAPSearch
-from django_auth_ldap.config import ActiveDirectoryGroupType
+from django_auth_ldap.config import LDAPSearch, ActiveDirectoryGroupType, GroupOfNamesType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST')
-AUTH_LDAP_BIND_DN = "CN=lenny.peng@senscomm.com,CN=Users,DC=senscomm,DC=com"
+AUTH_LDAP_BIND_DN = "CN=Lenny.Peng,ou=user,ou=Suzhou,ou=corp,DC=senscomm,DC=com"
 AUTH_LDAP_BIND_PASSWORD = os.getenv('LDAP_PASSWORD')
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-            "dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "sAMAccountName=%(user)s"
-)
-
-AUTH_LDAP_USER_ATTR_MAP = {
-    "username": "sAMAccountName",
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail",
-}
-
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch("dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "(objectCategory=Group)")
-
-AUTH_LDAP_GROUP_TYPE = ActiveDirectoryGroupType(name_attr="cn")
-
+        "DC=senscomm,DC=com", ldap.SCOPE_SUBTREE, "sAMAccountName=%(user)s"
+        )
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+        "dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+        )
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_superuser": "CN=admin,CN=Users,DC=SENSCOMM,DC=COM",
-    "is_staff": "CN=Users,DC=SENSCOMM,DC=COM",
-}
+        "is_superuser": "ou=groups,OU=admin,DC=senscomm,DC=com",
+        "is_staff": "ou=groups,OU=Users,DC=senscomm,DC=com",
+        }
+AUTH_LDAP_CONNECTION_OPTIONS = {
+        ldap.OPT_DEBUG_LEVEL: 1,
+        ldap.OPT_REFERRALS: 0,
+        }
+AUTH_LDAP_USER_ATTR_MAP = {
+        "username": "sAMAccountName",
+        "first_name": "givenName",
+        "last_name": "sn",
+        "email": "mail",
+        }
 
 AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
-]
- 
+        'django_auth_ldap.backend.LDAPBackend',
+        'django.contrib.auth.backends.ModelBackend',
+        ]
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -66,46 +67,46 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'material',
-    'material.frontend',
-    'viewflow',
-    'viewflow.frontend',
-    'senscomm.leave'
-]
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'material',
+        'material.frontend',
+        'viewflow',
+        'viewflow.frontend',
+        'senscomm.leave'
+        ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        ]
 
 ROOT_URLCONF = 'senscomm.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                    ],
+                },
+            },
+        ]
 
 WSGI_APPLICATION = 'senscomm.wsgi.application'
 
@@ -114,30 +115,30 @@ WSGI_APPLICATION = 'senscomm.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+            },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+            },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+            },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+            },
+        ]
 
 
 # Internationalization
