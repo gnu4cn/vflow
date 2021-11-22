@@ -18,29 +18,33 @@ from django_auth_ldap.config import LDAPSearch, ActiveDirectoryGroupType, GroupO
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST')
-AUTH_LDAP_BIND_DN = "CN=Lenny.Peng,ou=user,ou=Suzhou,ou=corp,DC=senscomm,DC=com"
+AUTH_LDAP_BIND_DN = os.getenv('LDAP_USERNAME')
 AUTH_LDAP_BIND_PASSWORD = os.getenv('LDAP_PASSWORD')
+AUTH_LDAP_BASE_DN = 'DC=XFOSS,DC=COM'
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        "DC=senscomm,DC=com", ldap.SCOPE_SUBTREE, "sAMAccountName=%(user)s"
+        AUTH_LDAP_BASE_DN, ldap.SCOPE_SUBTREE, '(|(userPrincipalName=%(user)s)(sAMAccountName=%(user)s))'
         )
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-        "dc=senscomm,dc=com", ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+        AUTH_LDAP_BASE_DN, ldap.SCOPE_SUBTREE, '(objectClass=groupOfNames)'
         )
+
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-        "is_superuser": "ou=groups,OU=admin,DC=senscomm,DC=com",
-        "is_staff": "ou=groups,OU=Users,DC=senscomm,DC=com",
+        "is_superuser": "CN=Web Admins,CN=Users,DC=xfoss,DC=com",
+        "is_staff": "OU=Users,OU=*,DC=xfoss,DC=com",
         }
+
 AUTH_LDAP_CONNECTION_OPTIONS = {
         ldap.OPT_DEBUG_LEVEL: 1,
         ldap.OPT_REFERRALS: 0,
         }
+
 AUTH_LDAP_USER_ATTR_MAP = {
         "username": "sAMAccountName",
         "first_name": "givenName",
         "last_name": "sn",
-        "email": "mail",
+        "email": "userPrincipalName",
         }
 
 AUTH_LDAP_FIND_GROUP_PERMS = True
@@ -164,3 +168,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {"console": {"class": "logging.StreamHandler"}},
+        "loggers": {"django_auth_ldap": {"level": "DEBUG", "handlers": ["console"]}},
+        }
