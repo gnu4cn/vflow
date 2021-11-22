@@ -7,8 +7,7 @@ def authenticate(address, username, password):
     conn.set_option(ldap.OPT_REFERRALS, 0)
 
     try:
-        dn = "cn={0},ou=user,ou=Suzhou,ou=corp,dc=senscomm,dc=com".format(username)
-        result = conn.simple_bind_s(dn, password)
+        result = conn.simple_bind_s(username, password)
     except ldap.INVALID_CREDENTIALS:
         return "Invalid credentials"
     except ldap.SERVER_DOWN:
