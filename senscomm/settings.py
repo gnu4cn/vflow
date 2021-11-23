@@ -17,10 +17,10 @@ from django_auth_ldap.config import LDAPSearch, ActiveDirectoryGroupType, GroupO
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+AUTH_LDAP_BASE_DN = 'DC=XFOSS,DC=COM'
 AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST')
 AUTH_LDAP_BIND_DN = os.getenv('LDAP_USERNAME')
 AUTH_LDAP_BIND_PASSWORD = os.getenv('LDAP_PASSWORD')
-AUTH_LDAP_BASE_DN = 'DC=XFOSS,DC=COM'
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
         AUTH_LDAP_BASE_DN, ldap.SCOPE_SUBTREE, '(|(userPrincipalName=%(user)s)(sAMAccountName=%(user)s))'
