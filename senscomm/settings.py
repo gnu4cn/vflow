@@ -32,7 +32,7 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
         "is_superuser": "CN=Web Admins,CN=Users,{0}".format(AUTH_LDAP_BASE_DN),
-        "is_staff": "CN=Users,DC=xfoss,DC=com",
+        "is_staff": "CN=Users,CN=Builtin,{0}".format(AUTH_LDAP_BASE_DN),
         }
 
 AUTH_LDAP_CONNECTION_OPTIONS = {
